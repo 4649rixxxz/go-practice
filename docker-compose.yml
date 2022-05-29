@@ -1,0 +1,29 @@
+version: '3'
+
+volumes:
+  gorm_data:
+
+services:
+  app:
+    build: .
+    tty: true
+    environment:
+      - TZ=Asia/Tokyo
+    ports:
+      - 8080:8080
+    volumes:
+      - ./src:/go/src
+  db:
+    image: mysql:8.0
+    platform: linux/x86_64
+    volumes:
+      - gorm_data:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/conf.d/my.cnf
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-go}
+      - MYSQL_USER=${MYSQL_USER:-user}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-password}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - TZ=Asia/Tokyo
+    ports:
+      - 3306:3306
